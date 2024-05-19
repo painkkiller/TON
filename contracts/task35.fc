@@ -1,0 +1,17 @@
+#include "imports/stdlib.fc";
+
+
+() recv_internal(int msg_value, cell in_msg, slice in_msg_body) impure {
+    slice cs = in_msg.begin_parse();
+	int flags = cs~load_uint(4);
+    slice sender_address = cs~load_msg_addr();
+    int total = ds~load_uint(32);
+    int n = in_msg_body~load_uint(32);
+    total += n;
+    set_data(begin_cell().store_slice(total).end_cell());
+}
+
+slice get_sum() method_id {
+   slice ds = get_data().begin_parse();
+   return ds~load_msg_addr();
+}

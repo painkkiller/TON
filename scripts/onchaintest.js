@@ -4,6 +4,10 @@ import { getHttpV4Endpoint } from "@orbs-network/ton-access";
 import { TonClient4 } from "ton";
 import qs from "qs";
 import qrcode from "qrcode-terminal";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 
 async function onchainTestScript() {
   const codeCell = Cell.fromBoc(Buffer.from(json.hex, "hex"))[0];
@@ -15,7 +19,7 @@ async function onchainTestScript() {
   });
 
   const endpoint = await getHttpV4Endpoint({
-    network: "testnet",
+    network: process.env.TESTNET ? "testnet" : "mainnet",
   });
   const client4 = new TonClient4({ endpoint });
 
@@ -28,9 +32,9 @@ async function onchainTestScript() {
   }
 
   let link =
-    `https://test.tonhub.com/transfer/` +
+    `https://${process.env.TESTNET ? 'test.' : ''}tonhub.com/transfer/` +
     address.toString({
-      testOnly: true,
+      testOnly: process.env.TESTNET ? true : false,
     }) +
     "?" +
     qs.stringify({
@@ -69,7 +73,7 @@ async function onchainTestScript() {
     ) {
       console.log(
         "New recent sender found: " +
-          most_recent_sender.toString({ testOnly: true })
+          most_recent_sender.toString({ testOnly: process.env.TESTNET ? true : false })
       );
       recent_sender_archive = most_recent_sender;
     }
